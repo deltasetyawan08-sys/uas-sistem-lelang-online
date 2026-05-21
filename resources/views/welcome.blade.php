@@ -25,7 +25,7 @@
         background:#111827;
         position:fixed;
         padding:25px;
-        color:white;
+        color:black;
     }
 
     .sidebar h2{
