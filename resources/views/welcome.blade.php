@@ -252,7 +252,6 @@
     <!-- PESERTA -->
     <div id="peserta" class="module">
 
-        <!-- FORM -->
         <div class="card-custom">
 
             <h3 class="mb-4">
@@ -260,6 +259,8 @@
             </h3>
 
             <form id="formPeserta">
+
+                <input type="hidden" id="peserta_id">
 
                 <div class="row">
 
@@ -304,15 +305,27 @@
 
                 </div>
 
-                <button class="btn btn-primary">
+                <button type="submit"
+                        class="btn btn-primary"
+                        id="btnSubmitPeserta">
+
                     Simpan Peserta
+
+                </button>
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        id="btnBatalEdit"
+                        style="display:none;">
+
+                    Batal
+
                 </button>
 
             </form>
 
         </div>
 
-        <!-- TABEL -->
         <div class="card-custom">
 
             <h4 class="mb-3">
@@ -569,6 +582,19 @@ function loadPeserta(){
                     <td>
 
                         <button
+                            class="btn btn-warning btn-sm editPeserta"
+                            data-id="${item.id}"
+                            data-nama="${item.nama_peserta}"
+                            data-email="${item.email}"
+                            data-nohp="${item.no_hp}"
+                            data-alamat="${item.alamat ?? ''}"
+                            data-status="${item.status_verifikasi}">
+
+                            Edit
+
+                        </button>
+
+                        <button
                             class="btn btn-danger btn-sm hapusPeserta"
                             data-id="${item.id}">
 
@@ -592,10 +618,18 @@ $('#formPeserta').submit(function(e){
 
     e.preventDefault();
 
+    let id = $('#peserta_id').val();
+
+    let method = id ? 'PUT' : 'POST';
+
+    let url = id
+        ? apiPeserta + '/' + id
+        : apiPeserta;
+
     $.ajax({
 
-        url: apiPeserta,
-        type:'POST',
+        url: url,
+        type: method,
 
         data:{
             nama_peserta: $('#nama_peserta').val(),
@@ -607,15 +641,19 @@ $('#formPeserta').submit(function(e){
 
         success:function(){
 
-            $('#formPeserta')[0].reset();
+            resetFormPeserta();
 
             loadPeserta();
+
+            alert(id
+                ? 'Peserta berhasil diupdate'
+                : 'Peserta berhasil ditambahkan');
 
         },
 
         error:function(xhr){
 
-            alert('Gagal menambahkan peserta');
+            alert('Terjadi kesalahan');
 
             console.log(xhr.responseText);
 
@@ -624,6 +662,50 @@ $('#formPeserta').submit(function(e){
     });
 
 });
+
+$('#dataPeserta').on('click','.editPeserta',function(){
+
+    $('#peserta_id').val($(this).data('id'));
+
+    $('#nama_peserta').val($(this).data('nama'));
+
+    $('#email_peserta').val($(this).data('email'));
+
+    $('#no_hp').val($(this).data('nohp'));
+
+    $('#alamat').val($(this).data('alamat'));
+
+    $('#status_verifikasi').val($(this).data('status'));
+
+    $('#btnSubmitPeserta')
+        .removeClass('btn-primary')
+        .addClass('btn-warning')
+        .text('Update Peserta');
+
+    $('#btnBatalEdit').show();
+
+});
+
+$('#btnBatalEdit').click(function(){
+
+    resetFormPeserta();
+
+});
+
+function resetFormPeserta(){
+
+    $('#formPeserta')[0].reset();
+
+    $('#peserta_id').val('');
+
+    $('#btnSubmitPeserta')
+        .removeClass('btn-warning')
+        .addClass('btn-primary')
+        .text('Simpan Peserta');
+
+    $('#btnBatalEdit').hide();
+
+}
 
 $('#dataPeserta').on('click','.hapusPeserta',function(){
 
