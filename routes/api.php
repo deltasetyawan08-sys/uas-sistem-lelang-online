@@ -12,3 +12,6 @@ Route::apiResource('peserta-lelang', PesertaLelangController::class);
 Route::apiResource('panitia', PanitiaController::class);
 Route::apiResource('penawaran', PenawaranController::class);
 Route::apiResource('pemenang', PemenangController::class);
+
+// Route khusus modul pemenang: tetapkan pemenang otomatis dari penawaran tertinggi
+Route::post('pemenang/tetapkan-otomatis', [PemenangController::class, 'tetapkanOtomatis']);
